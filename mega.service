@@ -1,0 +1,8 @@
+[Unit]
+Description=rclone for megasync
+[Service]
+User=root
+ExecStart=/usr/bin/rclone mount mega:/MEGAsync /mnt/mega --copy-links --no-gzip-encoding --no-check-certificate --allow-other --allow-non-empty --umask 000
+Restart=on-abort
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,430 @@
+################【全自动】CentOS 网络重装一键脚本#####################################################
+wget --no-check-certificate -O AutoReinstall.sh https://git.io/AutoReinstall.sh && bash AutoReinstall.sh
+密码：Pwd@CentOS
+
+#################设置修改CentOS系统时区###############################################################
+cp -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+timedatectl set-timezone Asia/Shanghai
+timedatectl
+
+###############系统更新+安装常用软件#####################
+yum update -y
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum install -y iftop nload lrzsz wget nano htop lsof
+
+############CentOS 配置swap交换区########################
+cd /var
+dd if=/dev/zero of=swapfile bs=1024 count=1024000
+/sbin/mkswap swapfile
+ll swapfile 
+/sbin/swapon swapfile
+/sbin/swapon -s
+nano /etc/fstab
+
+/var/swapfile swap swap defaults 0 0
+
+###########BBR Plus###############
+wget -N --no-check-certificate "https://raw.githubusercontent.com/chiakge/Linux-NetSpeed/master/tcp.sh" \
+&& chmod +x tcp.sh \
+&& ./tcp.sh
+
+sysctl net.ipv4.tcp_available_congestion_control
+
+################################
+systemctl stop firewalld
+yum remove firewalld -y
+################################
+
+################设置SSH密钥登录#############################
+远程服务器上生成密钥对
+ssh-keygen
+
+cd .ssh
+mv id_rsa.pub authorized_keys
+chmod 600 authorized_keys
+chmod 700 ~/.ssh
+
+sz /root/.ssh/id_rsa
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+wget --no-check-certificate -O /etc/ssh/sshd_config \
+"https://raw.githubusercontent.com/nmbv51710/v2ray/master/sshd_config"
+
+systemctl restart sshd
+
+#######################一键安装V2ray和Shadowsocks-libev########################################
+wget -N --no-check-certificate "https://raw.githubusercontent.com/nmbv51710/vps/master/v2ray.sh" \
+&& chmod +x v2ray.sh \
+&& ./v2ray.sh
+
+###################安装Docker######################
+curl -fsSL https://get.docker.com -o get-docker.sh \
+&& chmod +x get-docker.sh
+&& bash get-docker.sh
+systemctl enable docker
+systemctl start docker
+systemctl status docker
+####################The END########################
+
+【全自动】CentOS 网络重装一键脚本
+wget --no-check-certificate -O AutoReinstall.sh https://git.io/AutoReinstall.sh && bash AutoReinstall.sh
+密码：Pwd@CentOS
+
+设置修改CentOS系统时区
+cp -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+timedatectl set-timezone Asia/Shanghai
+timedatectl
+
+########################################################
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum install -y iftop nload lrzsz wget nano htop
+
+############CentOS 配置swap交换区########################
+cd /var
+dd if=/dev/zero of=swapfile bs=1024 count=1024000
+/sbin/mkswap swapfile
+ll swapfile 
+/sbin/swapon swapfile
+/sbin/swapon -s
+nano  /etc/fstab
+
+/var/swapfile swap swap defaults 0 0
+
+#################修改开机启动##############################
+nano  /etc/rc.d/rc.local
+chmod +x /etc/rc.d/rc.local
+
+#################CentOS 修改DNS##########################
+修改对应网卡的DNS的配置文件
+nano /etc/resolv.conf
+
+##############腾讯云卸载监控模块#############################
+/usr/local/qcloud/stargate/admin/uninstall.sh
+/usr/local/qcloud/YunJing/uninst.sh
+/usr/local/qcloud/monitor/barad/admin/uninstall.sh
+wget -qO- https://raw.githubusercontent.com/littleplus/TencentAgentRemove/master/remove.sh | bash
+
+##############switchyomega自动切换规则#############################
+https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
+
+#########################################################
+yum update -y
+
+###########BBR Plus###############
+wget -N --no-check-certificate "https://raw.githubusercontent.com/chiakge/Linux-NetSpeed/master/tcp.sh" \
+&& chmod +x tcp.sh \
+&& ./tcp.sh
+
+##########BBR##################
+wget --no-check-certificate -O /opt/bbr.sh https://github.com/teddysun/across/raw/master/bbr.sh
+chmod 755 /opt/bbr.sh
+/opt/bbr.sh
+
+sysctl net.ipv4.tcp_available_congestion_control
+
+################################
+systemctl stop firewalld
+yum remove firewalld -y
+################################
+
+################设置SSH密钥登录#############################
+远程服务器上生成密钥对
+ssh-keygen
+
+cd .ssh
+mv id_rsa.pub authorized_keys
+chmod 600 authorized_keys
+chmod 700 ~/.ssh
+
+cat /root/.ssh/id_rsa
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+wget --no-check-certificate -O /etc/ssh/sshd_config "https://raw.githubusercontent.com/nmbv51710/v2ray/master/sshd_config"
+nano /etc/ssh/sshd_config
+systemctl restart sshd
+
+################安装V2ray##################################
+bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
+wget --no-check-certificate -O /usr/local/etc/v2ray/config.json "https://raw.githubusercontent.com/nmbv51710/v2ray/master/config.json.kcp"
+####################tcp####################################
+wget --no-check-certificate -O /usr/local/etc/v2ray/config.json "https://raw.githubusercontent.com/nmbv51710/v2ray/master/config.json.tcp"
+###########################################################
+systemctl start v2ray
+systemctl enable v2ray
+systemctl status v2ray
+
+客户端config下载
+wget --no-check-certificate -O /usr/local/etc/v2ray/config.json "https://raw.githubusercontent.com/nmbv51710/v2ray/master/config.json.client.json"
+
+#################安装Shadowsocks-libv###########################################
+cd /etc/yum.repos.d/
+wget https://copr.fedorainfracloud.org/coprs/librehat/shadowsocks/repo/epel-7/librehat-shadowsocks-epel-7.repo
+yum clean all
+yum makecache
+yum install shadowsocks-libev -y
+
+wget --no-check-certificate -O /etc/shadowsocks-libev/config.json \
+"https://raw.githubusercontent.com/nmbv51710/vps/master/shadowsocks-libev.config.json"
+
+systemctl enable shadowsocks-libev
+systemctl start shadowsocks-libev
+systemctl status shadowsocks-libev
+ps -ef|grep ss-server
+
+
+###########安装cloud-torrent######################################
+bash <(wget -qO- https://raw.githubusercontent.com/boypt/simple-torrent/master/scripts/quickinstall.sh)
+
+mkdir -p /mnt/aria2
+mkdir -p /root/.config
+mkdir -p /mnt/cloudt
+
+wget --no-check-certificate -O /root/.config/upload.sh "https://raw.githubusercontent.com/nmbv51710/v2ray/master/cloudt_upload2gdrive.sh"
+nano /root/.config/upload.sh
+chmod +x /root/.config/upload.sh
+
+mv /cloud-torrent.json /cloud-torrent.json.bak
+wget --no-check-certificate -O /cloud-torrent.json "https://raw.githubusercontent.com/nmbv51710/v2ray/master/cloud-torrent.json"
+nano /cloud-torrent.json
+
+systemctl restart cloud-torrent
+systemctl status cloud-torrent
+
+########################docker######################
+wget -qO- get.docker.com | bash
+systemctl enable docker
+systemctl start docker
+systemctl status docker
+
+#########[Docker方式] 30秒搭建 V2ray ws tls 服务端 ###################
+docker run -d --name v2ray --restart always -p 443:443 -p 80:80 -v $HOME/.caddy:/root/.caddy \
+pengchujin/v2ray_ws:0.11 pacificrack01.xyz VirMach 91cb66ba-a373-43a0-8169-33d4eeaeb857 \
+&& sleep 3s \
+&& sudo docker logs v2ray
+
+docker run -d --name v2ray --restart always -p 443:443 -p 80:80 -v $HOME/.caddy:/root/.caddy \
+pengchujin/v2ray_ws:0.11 embysrv.ml RackNerd 91cb66ba-a373-43a0-8169-33d4eeaeb857 \
+&& sleep 3s \
+&& sudo docker logs v2ray
+
+docker run -d --name v2ray --restart always -p 443:443 -p 80:80 -v $HOME/.caddy:/root/.caddy \
+pengchujin/v2ray_ws:0.11 helen1978.cf _CF_VirTono_RO 91cb66ba-a373-43a0-8169-33d4eeaeb857 \
+&& sleep 3s \
+&& sudo docker logs v2ray
+
+docker run -d --name v2ray --restart always -p 443:443 -p 80:80 -v $HOME/.caddy:/root/.caddy \
+pengchujin/v2ray_ws:0.11 helen1978.gq _CF_VirTono_US 91cb66ba-a373-43a0-8169-33d4eeaeb857 \
+&& sleep 3s \
+&& sudo docker logs v2ray
+
+#############################群晖自动更新Docker#####################################
+docker run -d --name watchtower --restart always -v /var/run/docker.sock:/var/run/docker.sock v2tec/watchtower
+################################################################################
+docker run -d -p 53:53/udp -p 53:53/tcp --restart=always --name gsmartdns -v ~/.gsmartdns:/smartdns ghostry/smartdns
+
+#################shadowsocks/shadowsocks-libev####################
+docker run --name ss-libev -e PASSWORD=ruthiN2016 -e METHOD=chacha20 -p8488:8388 -p8488:8388/udp -d --restart always shadowsocks/shadowsocks-libev
+
+#########################v2ray/official################################
+docker pull v2fly/v2fly-core
+mkdir -p /etc/v2ray
+docker run -d -p 8388:8388 --name v2ray --restart=always -v /etc/v2ray:/etc/v2ray v2fly/v2fly-core
+wget --no-check-certificate -O /etc/v2ray/config.json "https://raw.githubusercontent.com/nmbv51710/v2ray/master/config.json"
+客户端config下载
+wget --no-check-certificate -O /etc/v2ray/config.json "https://raw.githubusercontent.com/nmbv51710/v2ray/master/config.json.client.json"
+
+#####################pengchujin/v2ray_ws##########################
+docker run -d --rm --name v2ray -p 443:443 -p 80:80 -v $HOME/.caddy:/root/.caddy \
+pengchujin/v2ray_ws:0.11 helen1978.xyz Google 91cb66ba-a373-43a0-8169-33d4eeaeb857 \
+&& sleep 3s \
+&& sudo docker logs v2ray
+
+########################################################
+docker run -d -p 8388:8388 --name v2ray --restart=always -v /etc/v2ray:/etc/v2ray v2ray/official
+wget --no-check-certificate -O /etc/v2ray/config.json "https://raw.githubusercontent.com/nmbv51710/v2ray/master/config.json"
+客户端config下载
+wget --no-check-certificate -O /etc/v2ray/config.json "https://raw.githubusercontent.com/nmbv51710/v2ray/master/config.json.client.json"
+
+###################mzz2017/v2raya#########################
+docker run -d \
+--restart=always \
+--privileged \
+--network=host \
+--name v2raya \
+-v /etc/v2raya:/etc/v2raya \
+mzz2017/v2raya
+
+##############teddysun/shadowsocks-libev###############################
+docker pull teddysun/shadowsocks-libev
+mkdir -p /etc/shadowsocks-libev
+cat > /etc/shadowsocks-libev/config.json <<EOF
+{
+    "server":"0.0.0.0",
+    "server_port":8388,
+    "password":"ruthiN2016",
+    "timeout":300,
+    "method":"chacha20",
+    "fast_open":true,
+    "nameserver":"8.8.8.8",
+    "mode":"tcp_and_udp"
+}
+EOF
+
+docker run -d -p 28388:8388 -p 28388:8388/udp --name ss-libev --restart=always -v /etc/shadowsocks-libev:/etc/shadowsocks-libev teddysun/shadowsocks-libev 
+
+##################Aria2 Pro#####################
+docker run -d \
+  --name aria2-pro \
+  --restart unless-stopped \
+  --log-opt max-size=1m \
+  -e PUID=$UID \
+  -e PGID=$GID \
+  -e RPC_SECRET=oldiy \
+  -e RPC_PORT=6800 \
+  -p 6800:6800 \
+  -e LISTEN_PORT=6888 \
+  -p 6888:6888 \
+  -p 6888:6888/udp \
+  -v /root/.config/aria2-config:/config \
+  -v /mnt/aria2:/downloads \
+  p3terx/aria2-pro
+
+#############emby/embyserver:latest######################################
+docker run --restart=always --name emby -d \
+--volume /root/.config/emby-config:/config \
+--volume /mnt:/mnt/share1 \
+--publish 8096:8096 \
+--publish 8920:8920 \
+--env UID=1000 \
+--env GID=100 \
+emby/embyserver:latest
+
+#############jellyfin/jellyfin######################################
+docker run --restart=always -d -p 8096:8096 \
+-v /root/.config/config:/config -v /mnt:/media jellyfin/jellyfin
+
+###############支持BT下载/磁力下载/边下边播################################
+docker run --restart=always --name simple-torrent -d \
+-p 3000:3000 \
+-v  /mnt/cloudt:/downloads \
+-v  /mnt/aria2:/torrents \
+boypt/cloud-torrent
+
+###############fauria/vsftpd#####################################
+docker run -d -p 20:20 -p 21:21 -p 21100-21110:21100-21110 \
+-v /mnt/:/home/vsftpd -e FTP_USER=ftpuser -e FTP_PASS=ruthiN2016 \
+-e PASV_ADDRESS=172.83.154.38 \
+-e PASV_MIN_PORT=21100 -e PASV_MAX_PORT=21110 \
+--name vsftpd --restart=always fauria/vsftpd
+
+#################teddysun/kms###################################
+docker run -d -p 1688:1688 --name kms --restart=always teddysun/kms
+
+###################filebrowser/filebrowser#################################
+docker run -d -v /root/site:/srv  \
+-v /root/.config/filebrowserconfig.json:/etc/config.json  \
+-v /root/.config/database.db:/etc/database.db \
+-p 8080:80 --name  filebrowser  --restart=always filebrowser/filebrowser
+
+###################kmb32123/youtube-dl-server############################
+docker run -d -p 28080:8080 --restart=always --name youtube-dl -v /mnt/youtube:/youtube-dl kmb32123/youtube-dl-server
+
+######################rrshare##########################################
+docker run -d -p3001:3001 --restart=always --name rrshare \
+-v /mnt/rrshare:/opt/work/store -v /root/.config/conf:/opt/work/conf  \
+xlight/rrshare
+
+###################webdav#######################################
+docker run --restart always -v /mnt/webdav:/var/lib/dav \
+    -e AUTH_TYPE=Digest -e USERNAME=admin -e PASSWORD=oldiy \
+    --publish 8090:80 --name webdav \
+    -e LOCATION=/webdav -d bytemark/webdav
+
+####################Speedtest##############################
+使用 Docker 快速安装 HTML5-Based Speedtest，可以准确的测试本地到 VPS 的网络速度
+docker run --restart always --name speedtest -d -p 6688:80 ilemonrain/html5-speedtest:alpine
+###########################################################
+
+客户端设置
+yum install davfs2
+mount -t davfs http://172.83.154.38:8090/webdav /mnt/webdav
+
+nano /etc/davfs2/davfs2.conf
+nano /etc/davfs2/secrets
+
+add http://172.83.154.38:8090/webdav admin oldiy
+nano /etc/rc.local
+add mount -t davfs http://172.83.154.38:8090/webdav /mnt/webdav
+
+###########################################################
+yum install nfs-utils
+systemctl enable rpcbind
+systemctl enable nfs
+systemctl start rpcbind
+systemctl start nfs
+
+mkdir /mnt/nfs
+chmod 755 /mnt
+nano /etc/exports
+/mnt     helen1978.xyz(rw,sync,no_root_squash,no_all_squash)
+systemctl restart nfs
+showmount -e localhost
+
+客户端
+yum install nfs-utils -y
+systemctl enable rpcbind
+systemctl enable nfs
+systemctl start rpcbind
+systemctl start nfs
+
+showmount -e 172.83.154.38
+mount -t nfs 172.83.154.38:/mnt/ftpuser /mnt/nfs
+
+nano /etc/fstab
+172.83.154.38:/mnt /mnt/nfs nfs rw,sync,hard,intr 0 0
+
+107.173.146.129:/mnt/webdav/data /mnt/nfs nfs rw,sync,hard,intr 0 0
+or
+nano /etc/rc.local
+add mount -t nfs 172.83.154.38:/mnt /mnt/nfs
+
+umount.nfs /mnt/nfs -v
+
+#########How do I mount nfs client with CacheFS support?########################
+yum -y install cachefilesd
+systemctl start cachefilesd.service
+systemctl enable cachefilesd.service
+systemctl status cachefilesd.service
+
+nano /etc/rc.local
+mount -t nfs4 -o rsize=32768,wsize=32768,intr,hard,proto=tcp,sync,fsc 172.83.154.38:/mnt /mnt/nfs-spartanhost
+
+#######################glider############################ 
+SS转发
+nohup glider -listen socks5://:1080 -forward ss://chacha20:ruthiN2016@104.194.206.168:8488 &
+nohup glider -listen ss://chacha20:123456@:8388 -forward ss://chacha20:ruthiN2016@104.194.206.168:8488 &
+
+V2ray转发
+nohup glider -listen socks5://:1080 -forward vmess://91cb66ba-a373-43a0-8169-33d4eeaeb857@185.133.193.212:8388?alterID=64 &
+
+V2ray转发成SS
+nohup glider -listen ss://chacha20:McZeLEz88RE@:8388 -forward vmess://91cb66ba-a373-43a0-8169-33d4eeaeb857@185.133.193.212:8388?alterID=64 &
+@@@@@@@@@@
+nohup glider -listen ss://chacha20:McZeLEz88RE@:28388 -forward vmess://91cb66ba-a373-43a0-8169-33d4eeaeb857@23.95.221.254?alterID=64 &
+@@@@@@@@@@
+nohup glider -listen ss://chacha20:123456@:8588 -forward vmess://91cb66ba-a373-43a0-8169-33d4eeaeb857@104.194.206.168:8388?alterID=64 &
+nohup glider -listen ss://chacha20:123456@:8388 -forward tls://helen1978.tk:443,ws://@/one,vmess://91cb66ba-a373-43a0-8169-33d4eeaeb857@?alterID=64 & 
+nohup glider -listen ss://chacha20:123456@:8488 -forward tls://t.ibcl.us:443,ws://@/one,vmess://ad806487-2d26-4636-98b6-ab85cc8521f7@?alterID=64 -verbose &
+
+#########################centos DD windows#############################################
+wget --no-check-certificate -qO InstallNET.sh 'https://moeclub.org/attachment/LinuxShell/InstallNET.sh' && bash InstallNET.sh -dd '[Windows dd包直连地址]'
+wget --no-check-certificate -qO InstallNET.sh 'https://moeclub.org/attachment/LinuxShell/InstallNET.sh' && bash InstallNET.sh -dd 'https://oss.sunpma.com/Windows/Win10_2019LTSC_64_Administrator_nat.ee.gz'
+
+yum install -y rsync
+0 1 * * * rsync -r --remove-source-files /mnt/youtube/ /mnt/gshare
+0 2 * * * rsync -r --remove-source-files --exclude '.torrent.bolt.db' /mnt/nfs/cloudt/ /mnt/data
+0 3 * * * rsync -r --remove-source-files --exclude '*.torrent' /mnt/nfs/aria2/ /mnt/data
+
+0 1 * * * rsync -r --remove-source-files /mnt/youtube/ /mnt/gdrive
+0 2 * * * rsync -r --remove-source-files --exclude '.torrent.bolt.db' /mnt/cloudt/ /mnt/gdrive
+0 3 * * * rsync -r --remove-source-files --exclude '*.torrent' /mnt/aria2/ /mnt/gdrive
+0 4 * * * /sbin/reboot
+

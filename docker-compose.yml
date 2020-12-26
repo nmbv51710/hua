@@ -1,0 +1,26 @@
+version: '3'
+services:
+  v2ray:
+    image: v2fly/v2fly-core
+    container_name: v2ray_ws
+    restart: always
+    volumes: 
+      - /etc/v2ray_ws/config.json:/etc/v2ray/config.json
+      - /etc/log/v2ray:/var/log/v2ray
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    expose: 
+      - "8388"
+  caddy:
+    image: caddy
+    container_name: caddy
+    restart: always
+    volumes: 
+      - /etc/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - /etc/caddy/data:/data
+      - /etc/log/caddy:/var/log/caddy
+      - /etc/caddy/config:/config
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports: 
+      - "443:443"

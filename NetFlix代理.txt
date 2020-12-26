@@ -1,0 +1,33 @@
+cd /etc/sysconfig/network-scripts/
+cp ifcfg-eth0 ifcfg-eth0.bak
+nano /etc/sysconfig/network-scripts/ifcfg-eth0
+
+#SpartnHost
+DNS1=172.83.154.38
+DNS2=8.8.8.8
+
+#Virtono
+DNS1=92.118.37.206
+DNS2=8.8.8.8
+
+
+service network restart
+reboot
+
+安装
+wget --no-check-certificate -O dnsmasq_sniproxy.sh \
+https://raw.githubusercontent.com/myxuchangbin/dnsmasq_sniproxy_install/master/dnsmasq_sniproxy.sh \
+&& bash dnsmasq_sniproxy.sh -i
+卸载
+wget --no-check-certificate -O dnsmasq_sniproxy.sh \
+https://raw.githubusercontent.com/myxuchangbin/dnsmasq_sniproxy_install/master/dnsmasq_sniproxy.sh \
+&& bash dnsmasq_sniproxy.sh -u
+
+systemctl enable sniproxy
+systemctl restart sniproxy
+systemctl status sniproxy
+
+nano /etc/resolv.conf
+#Virtono
+nameserver 172.83.154.38
+nameserver 8.8.8.8

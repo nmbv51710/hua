@@ -1,0 +1,10 @@
+{
+    "server":"0.0.0.0",
+    "server_port":8488,
+    "password":"ruthiN2016",
+    "timeout":300,
+    "method":"chacha20",
+    "fast_open":true,
+    "nameserver":"8.8.8.8",
+    "mode":"tcp_and_udp"
+}

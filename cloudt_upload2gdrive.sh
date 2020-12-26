@@ -1,0 +1,10 @@
+#!/bin/bash
+#下载后移动的文件夹路径
+RemoteDIR="/mnt/gshare"; 
+if [[ ${CLD_TYPE} == "torrent" ]]; then
+eval mv \'"${CLD_DIR}/${CLD_PATH}"\' "${RemoteDIR}";
+#移动后停止该任务
+/usr/bin/curl --data "stop:${CLD_HASH}" "http://127.0.0.1:3000/api/torrent";
+#停止后清除该任务，也就是不会出现在Web界面了
+/usr/bin/curl --data "delete:${CLD_HASH}" "http://127.0.0.1:3000/api/torrent";
+fi

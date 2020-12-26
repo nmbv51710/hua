@@ -1,0 +1,40 @@
+
+OAuth 客户端已创建 h0w86987@gmail.com
+您可以随时通过“API 与服务中的凭据”访问客户端 ID 和密钥
+
+在验证 OAuth 同意屏幕之前，OAuth 的敏感范围登录数量将被限定为最多 100 个。此屏幕的验证过程可能需要数天。
+
+您的客户端 ID
+574093948341-25o5b31gds4rlqto3gp0k6c322u142hn.apps.googleusercontent.com
+您的客户端密钥
+H1u6-6hGZjqVCb0MkpM2BIbb
+
+yum install man man-pages unzip fuse lrzsz -y
+curl https://rclone.org/install.sh | sudo bash
+rclone config
+
+wget --no-check-certificate -O /root/.config/rclone/rclone.conf \
+"https://raw.githubusercontent.com/nmbv51710/v2ray/master/rclone.conf"
+
+mkdir -p /mnt/gshare
+wget --no-check-certificate -O /etc/systemd/system/gshare.service \
+"https://raw.githubusercontent.com/nmbv51710/v2ray/master/gshare.service"
+
+systemctl enable gshare
+systemctl start gshare
+systemctl status gshare
+
+#该参数主要是上传用的
+/usr/bin/rclone mount gshare:/ /volume1/mnt/gshare \
+--umask 0000 \
+--default-permissions \
+--allow-non-empty \
+--allow-other \
+--transfers 4 \
+--buffer-size 32M \
+--low-level-retries 200 \
+--dir-cache-time 12h \
+--vfs-read-chunk-size 32M \
+--vfs-read-chunk-size-limit 2048M \
+--dir-cache-time 96h \
+--daemon

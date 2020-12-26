@@ -1,0 +1,12 @@
+google.twinings.ml //域名
+{ 
+  log {
+    output file /var/log/caddy/caddy.log
+  }
+  tls caddy.log@gmail.com
+  @websockets {
+    header Connection Upgrade
+    header Upgrade websocket
+  }
+  reverse_proxy @websockets v2ray://v2ray:8388
+}

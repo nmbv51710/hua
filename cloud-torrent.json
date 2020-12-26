@@ -1,0 +1,15 @@
+{
+  "autostart": true,
+  "donecmd": "/root/.config/upload.sh",
+  "donecmdthreshold": "30s",
+  "downloaddirectory": "/mnt/cloudt",
+  "enableupload": true,
+  "incomingport": 50007,
+  "obfspreferred": true,
+  "obfsrequirepreferred": false,
+  "proxyurl": "",
+  "scraperurl": "https://raw.githubusercontent.com/boypt/simple-torrent/master/scraper-config.json",
+  "seedratio": 0,
+  "trackerlisturl": "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt",
+  "watchdirectory": "/mnt/aria2"
+}
