@@ -1,0 +1,134 @@
+1.系统Debian 10.7使用一键DD安装
+bash <(wget --no-check-certificate -qO- 'https://moeclub.org/attachment/LinuxShell/InstallNET.sh') \
+-d 10 -v 64 -a
+
+系统安装完成后的默认用户名为root，默认密码为: MoeClub.org
+
+升级系统内核到5.9
+echo "deb http://deb.debian.org/debian buster-backports main contrib non-free" > /etc/apt/sources.list.d/backports.list
+apt update
+apt install -t buster-backports linux-image-amd64 firmware-linux firmware-linux-nonfree
+
+uname -srm
+
+2.修改SSH端口，修改root密码
+nano /etc/ssh/sshd_config
+修改Ports为26838
+systemctl restart sshd
+
+3.修改时区
+cp -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+timedatectl set-timezone Asia/Shanghai
+timedatectl
+
+4.安装常用软件
+apt update -y
+apt install -y iftop nload lrzsz wget nano htop lsof curl net-tools
+
+5.配置swap交换区
+wget -N --no-check-certificate "https://raw.githubusercontent.com/nmbv51710/hua/master/swap.sh" \
+&& chmod +x swap.sh \
+&& ./swap.sh
+
+6.安装BBR
+wget -N --no-check-certificate "https://raw.githubusercontent.com/chiakge/Linux-NetSpeed/master/tcp.sh" \
+&& chmod +x tcp.sh \
+&& ./tcp.sh
+
+sysctl net.ipv4.tcp_available_congestion_control
+systemctl stop firewalld
+apt remove firewalld -y
+
+7.安装Docker
+curl -fsSL https://get.docker.com -o get-docker.sh \
+&& chmod +x get-docker.sh \
+&& bash get-docker.sh
+
+systemctl enable docker
+systemctl start docker
+systemctl status docker
+
+curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" \
+-o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose version
+
+8.使用Docker安装v2ray/official 8388和Xray - Shadowsocks-Libev 8488###########
+wget -N --no-check-certificate "https://raw.githubusercontent.com/nmbv51710/hua/master/v2ray_docker.sh" \
+&& chmod +x v2ray_docker.sh \
+&& ./v2ray_docker.sh
+
+8.非Docker安装V2ray和Xray
+wget -N --no-check-certificate "https://raw.githubusercontent.com/nmbv51710/hua/master/v2ray.sh" \
+&& chmod +x v2ray.sh \
+&& ./v2ray.sh
+
+9.挂载Google Drive使用Rcone
+apt install man-db unzip fuse lrzsz sudo -y
+curl https://rclone.org/install.sh | sudo bash
+rclone config
+
+wget --no-check-certificate -O /root/.config/rclone/rclone.conf \
+"https://raw.githubusercontent.com/nmbv51710/hua/master/rclone.conf"
+mkdir -p /mnt/gshare
+wget --no-check-certificate -O /etc/systemd/system/gshare.service \
+"https://raw.githubusercontent.com/nmbv51710/hua/master/gshare.service"
+
+systemctl enable gshare
+systemctl start gshare
+systemctl status gshare
+
+10.安装媒体播放器Jellyfin
+docker run --name jellyfin --restart=always -d -p 8096:8096 \
+-v /root/.config/config:/config -v /mnt:/media jellyfin/jellyfin
+
+11.安装Gost端口转发
+wget --no-check-certificate -O gost.sh https://raw.githubusercontent.com/KANIKIG/Multi-EasyGost/master/gost.sh \
+&& chmod +x gost.sh \
+&& ./gost.sh
+
+12.wireguard一键安装
+############Debian一键安装Wireguard脚本##############
+curl -O https://raw.githubusercontent.com/barrar/wireguard-install/master/wireguard-install.sh
+chmod +x wireguard-install.sh
+./wireguard-install.sh
+
+测试
+curl zx2c4.com/ip
+
+13.安装seafile网盘程序
+#################Seafiles安装配置脚本########################################
+docker run -d --name seafile --restart=always\
+  -e SEAFILE_SERVER_HOSTNAME=dallas.twinings.ml \
+  -e SEAFILE_ADMIN_EMAIL=nmbv51710@gmail.com \
+  -e SEAFILE_ADMIN_PASSWORD=oldiy \
+  -v /mnt:/shared \
+  -p 5212:80 \
+  seafileltd/seafile:latest
+   
+docker exec seafile /scripts/gc.sh
+
+##################安装Caddy########### 
+wget -N --no-check-certificate https://raw.githubusercontent.com/iiiiiii1/doubi/master/caddy_install.sh \
+&& chmod +x caddy_install.sh \
+&& bash caddy_install.sh
+
+#https访问，该配置会自动签发SSL，请提前解析域名到VPS服务器
+echo "racknerd.twinings.ml {
+ gzip
+ tls oracle@twinings.com
+ proxy / 127.0.0.1:8096 {
+    header_upstream Host {host}
+    header_upstream X-Real-IP {remote}
+    header_upstream X-Forwarded-For {remote}
+    header_upstream X-Forwarded-Port {server_port}
+    header_upstream X-Forwarded-Proto {scheme}
+  }
+}" > /usr/local/caddy/Caddyfile
+
+/etc/init.d/caddy start
+
+
+
+
