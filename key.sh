@@ -1,4 +1,4 @@
-#/bin/bash
+#/bin/sh
 apt-get update -y
 apt-get install curl -y
 echo '============================
