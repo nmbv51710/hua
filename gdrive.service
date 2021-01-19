@@ -1,0 +1,18 @@
+[Unit]
+Description=rclone for googledrive
+[Service]
+User=root
+ExecStart=/usr/bin/rclone mount gdrive:/ /mnt/gdrive \
+--umask 0000 \
+--default-permissions \
+--allow-non-empty \
+--allow-other \
+--transfers 4 \
+--buffer-size 32M \
+--low-level-retries 200 \
+--dir-cache-time 12h \
+--vfs-read-chunk-size 32M \
+--vfs-read-chunk-size-limit 2048M
+Restart=on-abort
+[Install]
+WantedBy=multi-user.target
