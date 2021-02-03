@@ -3,7 +3,7 @@
     "server_port":8488,
     "password":"JyCmGMMGr9d2SsW6",
     "timeout":300,
-    "method":"chacha20",
+    "method":"aes-256-gcm",
     "fast_open":true,
     "nameserver":"8.8.8.8",
     "mode":"tcp_and_udp"
