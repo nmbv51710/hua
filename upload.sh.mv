@@ -1,6 +1,6 @@
 #!/bin/bash
 #下载后移动的文件夹路径
-RemoteDIR="/mnt/gshare/rrshare";  
+RemoteDIR="/mnt/gshare/cloud";  
 if [[ ${CLD_TYPE} == "torrent" ]]; then
 eval mv \'"${CLD_DIR}/${CLD_PATH}"\' "${RemoteDIR}";
 #移动后停止该任务
